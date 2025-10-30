@@ -1,0 +1,43 @@
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>My Exports</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>My Exports</h2>
+    <button id="start">Start Users Export</button>
+    <table id="tbl" border="1" cellpadding="6">
+        <thead><tr><th>JobId</th><th>Status</th><th>File</th><th>RequestedAt</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function load() {
+            $.getJSON('/export/list', function(data) {
+                var tbody = $('#tbl tbody');
+                tbody.empty();
+                data.forEach(function(r) {
+                    var fileLink = r.status === 2 ? '<a href="/export/download/' + r.jobId + '">Download</a>' : '';
+                    tbody.append('<tr><td>' + r.jobId + '</td><td>' + r.status + '</td><td>' + (r.fileName||'') + '</td><td>' + r.requestedAt + '</td><td>' + fileLink + '</td></tr>');
+                });
+            });
+        }
+
+        $('#start').on('click', function() {
+            $.post('/export/start/UsersExportHandler', function(res) {
+                alert('Job started: ' + res.jobId);
+                load();
+            });
+        });
+
+        setInterval(load, 5000);
+        $(function(){ load(); });
+    </script>
+</body>
+</html>
