@@ -1,0 +1,5 @@
+SELECT t.name AS TableName, t.temporal_type_desc, h.name AS HistoryTableName
+FROM sys.tables t
+LEFT JOIN sys.tables h ON t.history_table_id = h.object_id
+WHERE t.name IN ('Roles','AppPermissions','MenuItems','ActiveDirectoryGroups',
+                 'RoleActiveDirectoryGroups','RolePermissions','MenuItemPermissions')
