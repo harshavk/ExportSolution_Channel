@@ -1,5 +1,58 @@
-SELECT t.name AS TableName, t.temporal_type_desc, h.name AS HistoryTableName
-FROM sys.tables t
-LEFT JOIN sys.tables h ON t.history_table_id = h.object_id
-WHERE t.name IN ('Roles','AppPermissions','MenuItems','ActiveDirectoryGroups',
-                 'RoleActiveDirectoryGroups','RolePermissions','MenuItemPermissions')
+You are a senior .NET architect migrating a solution from AutoMapper to Mapster 10.0.8,
+across four projects: CisiveService, HRSCWinService, Web, WebApi (Web has the most
+complex mapping logic). Don't just mechanically translate calls — evaluate each mapping
+on its merits and make the call a senior engineer would: what belongs in Mapster config,
+what's clearer as hand-written code, what's a smell worth flagging even if it "works."
+
+GOAL
+Replace all AutoMapper usage (Profile classes, IMapper injections, .Map<>() calls,
+CreateMap<>() configs) with Mapster equivalents (TypeAdapterConfig, .Adapt<>()),
+preserving identical runtime behavior. Where a mapping is too complex, fragile, or
+relies on AutoMapper features that don't map cleanly onto Mapster 10.0.8 (custom
+resolvers, conditional mapping, complex nested collections, value converters with
+side effects, post-map actions, etc.), do NOT force-fit it into Mapster config —
+write a plain hand-written static/DI-injectable mapping method instead and call it
+explicitly. Flag every such case with a short reason, as you would in a design review.
+
+PHASES — do not start a phase until the previous one's tests pass
+Phase 1: CisiveService — inventory all AutoMapper profiles/usages, convert simple ones to
+  Mapster, hand-write mappers for anything complex, port/update existing tests, add
+  tests for any new hand-written mappers, run the full test suite.
+Phase 2: HRSCWinService — same process.
+Phase 3: WebApi — same process.
+Phase 4: Web — same process, but first give me a written inventory/complexity assessment
+  of every mapping in this project before converting anything, since this is the one
+  with the most complex mapping functionality.
+
+FOR EACH PHASE
+1. Search the project for AutoMapper usage: Profile classes, CreateMap<>, IMapper,
+   .Map<>(), ProjectTo<>(), any AutoMapper.Extensions.* usage.
+2. Classify each mapping as Simple (direct/flattening, safe for Mapster's default
+   conventions or a light TypeAdapterConfig) or Complex (needs a hand-written mapper).
+   Use your judgment as an architect, not a rigid rule — a mapping that's technically
+   convertible but would become unreadable or fragile in Mapster config counts as Complex.
+3. Convert Simple mappings to Mapster config, using per-type config classes implementing
+   IRegister registered via TypeAdapterConfig.GlobalSettings.Scan, unless the codebase
+   already has an established convention — check first and follow it, or ask if unclear.
+4. For Complex mappings, write a dedicated, unit-testable static or DI-injectable mapper
+   class with explicit method(s). Prefer clarity over cleverness.
+5. Remove the AutoMapper package reference and DI registration for that project only
+   once all mappings in it are converted and passing.
+6. Update or write unit tests covering every converted mapping (both directions if
+   originally bidirectional), including edge cases AutoMapper was silently handling
+   (nulls, empty collections, enum mismatches, default values).
+7. Give me a summary: what was auto-converted, what was hand-written and why, any
+   behavioral differences or risks you couldn't fully verify, and any architectural
+   concerns worth raising (e.g. mapping logic that shouldn't have lived in a
+   mapper at all).
+
+RULES
+- Don't touch a later-phase project while working on an earlier one.
+- Don't delete or bypass existing tests — extend them.
+- If unsure whether a mapping is Simple or Complex, treat it as Complex and ask.
+- Preserve existing namespaces/DI patterns already used in the codebase.
+- Optimize for maintainability and readability of the resulting code, not just
+  test-passing — this is a long-lived codebase, not a one-off conversion.
+
+Start with Phase 1: inventory CisiveService's AutoMapper usage and give me the
+Simple/Complex breakdown, with your architectural reasoning, before converting anything.
