@@ -56,3 +56,15 @@ RULES
 
 Start with Phase 1: inventory CisiveService's AutoMapper usage and give me the
 Simple/Complex breakdown, with your architectural reasoning, before converting anything.
+
+
+
+Analyze this entire solution and produce a single markdown document with these sections:
+	1.	Projects & Layers — every project in the solution, its type (Web/API/Domain/Infrastructure/etc.), and how they reference each other (dependency graph as text).
+	2.	Data Model — all major entities/tables per project, their relationships (FKs, joins), and which project “owns” each entity.
+	3.	External Integrations — every outbound call: other APIs, SSO/auth providers, message queues, file/SFTP, third-party services. Note sync vs async.
+	4.	Cross-Cutting Concerns — auth/authorization model, logging, caching, background jobs/workers, shared libraries used across projects.
+	5.	Current Bounded Contexts (informal) — group functionality by business capability as it exists today (e.g. “Menu/Role Admin,” “File Import,” “Document Ingestion”), even if it’s all one monolith.
+	6.	Hot Paths & Coupling — which modules change together most, which entities are read/written by more than one “context,” any tight coupling that would resist splitting.
+	7.	Deployment Today — how it’s hosted/deployed now (single app, IIS, containers, etc.), and any existing seams (separate DBs, separate deploy pipelines).
+Be concrete — real class/project/table names, not generic placeholders. Keep it factual inventory, not recommendations.
