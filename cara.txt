@@ -68,3 +68,6 @@ Analyze this entire solution and produce a single markdown document with these s
 	6.	Hot Paths & Coupling — which modules change together most, which entities are read/written by more than one “context,” any tight coupling that would resist splitting.
 	7.	Deployment Today — how it’s hosted/deployed now (single app, IIS, containers, etc.), and any existing seams (separate DBs, separate deploy pipelines).
 Be concrete — real class/project/table names, not generic placeholders. Keep it factual inventory, not recommendations.
+
+dotnet list <project> package --include-transitive | findstr /i "kafka raven"
+
