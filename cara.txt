@@ -76,5 +76,9 @@ dotnet list Vstar.sln package --include-transitive | findstr /i "raven"
 
 Get-ChildItem -Recurse -Include *.csproj,*.json | Select-String -Pattern "raven" -SimpleMatch
 
+cd C:\Users\K059839\source\repos\Vstar-NewRepo\src\Web
+dotnet list package --include-transitive
+
+Get-ChildItem -Recurse -Include *.csproj,*.config,*.json -Exclude node_modules | Select-String -Pattern "raven" -SimpleMatch
 
 
