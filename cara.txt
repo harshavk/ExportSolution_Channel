@@ -71,3 +71,7 @@ Be concrete — real class/project/table names, not generic placeholders. Keep i
 
 dotnet list <project> package --include-transitive | findstr /i "kafka raven"
 
+cd C:\Users\K059839\source\repos\Vstar-NewRepo
+dotnet list Vstar.sln package --include-transitive | findstr /i "raven"
+
+
