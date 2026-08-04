@@ -74,4 +74,7 @@ dotnet list <project> package --include-transitive | findstr /i "kafka raven"
 cd C:\Users\K059839\source\repos\Vstar-NewRepo
 dotnet list Vstar.sln package --include-transitive | findstr /i "raven"
 
+Get-ChildItem -Recurse -Include *.csproj,*.json | Select-String -Pattern "raven" -SimpleMatch
+
+
 
