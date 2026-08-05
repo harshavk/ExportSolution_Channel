@@ -81,4 +81,22 @@ dotnet list package --include-transitive
 
 Get-ChildItem -Recurse -Include *.csproj,*.config,*.json -Exclude node_modules | Select-String -Pattern "raven" -SimpleMatch
 
+SELECT
+    TemplateId,
+    Name,
+    CASE WHEN Body LIKE '%<b>%' OR Body LIKE '%<strong>%' OR Body LIKE '%font-weight%bold%' THEN 1 ELSE 0 END AS HasBold,
+    CASE WHEN Body LIKE '%<i>%' OR Body LIKE '%<em>%' THEN 1 ELSE 0 END AS HasItalic,
+    CASE WHEN Body LIKE '%<u>%' OR Body LIKE '%text-decoration%underline%' THEN 1 ELSE 0 END AS HasUnderline,
+    CASE WHEN Body LIKE '%<ul%' OR Body LIKE '%<ol%' THEN 1 ELSE 0 END AS HasList,
+    CASE WHEN Body LIKE '%<a %' OR Body LIKE '%href%' THEN 1 ELSE 0 END AS HasLink,
+    CASE WHEN Body LIKE '%<table%' THEN 1 ELSE 0 END AS HasTable,
+    CASE WHEN Body LIKE '%align=%' OR Body LIKE '%text-align%' THEN 1 ELSE 0 END AS HasAlign,
+    CASE WHEN Body LIKE '%font-family%' THEN 1 ELSE 0 END AS HasFontFamily,
+    CASE WHEN Body LIKE '%font-size%' THEN 1 ELSE 0 END AS HasFontSize,
+    CASE WHEN Body LIKE '%color%' THEN 1 ELSE 0 END AS HasColor,
+    CASE WHEN Body LIKE '%<sub>%' OR Body LIKE '%<sup>%' THEN 1 ELSE 0 END AS HasSubSuper,
+    CASE WHEN Body LIKE '%&lt;%' THEN 1 ELSE 0 END AS IsDoubleEncoded,
+    LEN(Body) AS BodyLength
+FROM EmailTemplates
+ORDER BY TemplateId;
 
