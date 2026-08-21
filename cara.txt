@@ -1,111 +1,29 @@
-You are a senior .NET architect migrating a solution from AutoMapper to Mapster 10.0.8,
-across four projects: CisiveService, HRSCWinService, Web, WebApi (Web has the most
-complex mapping logic). Don't just mechanically translate calls — evaluate each mapping
-on its merits and make the call a senior engineer would: what belongs in Mapster config,
-what's clearer as hand-written code, what's a smell worth flagging even if it "works."
-
-GOAL
-Replace all AutoMapper usage (Profile classes, IMapper injections, .Map<>() calls,
-CreateMap<>() configs) with Mapster equivalents (TypeAdapterConfig, .Adapt<>()),
-preserving identical runtime behavior. Where a mapping is too complex, fragile, or
-relies on AutoMapper features that don't map cleanly onto Mapster 10.0.8 (custom
-resolvers, conditional mapping, complex nested collections, value converters with
-side effects, post-map actions, etc.), do NOT force-fit it into Mapster config —
-write a plain hand-written static/DI-injectable mapping method instead and call it
-explicitly. Flag every such case with a short reason, as you would in a design review.
-
-PHASES — do not start a phase until the previous one's tests pass
-Phase 1: CisiveService — inventory all AutoMapper profiles/usages, convert simple ones to
-  Mapster, hand-write mappers for anything complex, port/update existing tests, add
-  tests for any new hand-written mappers, run the full test suite.
-Phase 2: HRSCWinService — same process.
-Phase 3: WebApi — same process.
-Phase 4: Web — same process, but first give me a written inventory/complexity assessment
-  of every mapping in this project before converting anything, since this is the one
-  with the most complex mapping functionality.
-
-FOR EACH PHASE
-1. Search the project for AutoMapper usage: Profile classes, CreateMap<>, IMapper,
-   .Map<>(), ProjectTo<>(), any AutoMapper.Extensions.* usage.
-2. Classify each mapping as Simple (direct/flattening, safe for Mapster's default
-   conventions or a light TypeAdapterConfig) or Complex (needs a hand-written mapper).
-   Use your judgment as an architect, not a rigid rule — a mapping that's technically
-   convertible but would become unreadable or fragile in Mapster config counts as Complex.
-3. Convert Simple mappings to Mapster config, using per-type config classes implementing
-   IRegister registered via TypeAdapterConfig.GlobalSettings.Scan, unless the codebase
-   already has an established convention — check first and follow it, or ask if unclear.
-4. For Complex mappings, write a dedicated, unit-testable static or DI-injectable mapper
-   class with explicit method(s). Prefer clarity over cleverness.
-5. Remove the AutoMapper package reference and DI registration for that project only
-   once all mappings in it are converted and passing.
-6. Update or write unit tests covering every converted mapping (both directions if
-   originally bidirectional), including edge cases AutoMapper was silently handling
-   (nulls, empty collections, enum mismatches, default values).
-7. Give me a summary: what was auto-converted, what was hand-written and why, any
-   behavioral differences or risks you couldn't fully verify, and any architectural
-   concerns worth raising (e.g. mapping logic that shouldn't have lived in a
-   mapper at all).
-
-RULES
-- Don't touch a later-phase project while working on an earlier one.
-- Don't delete or bypass existing tests — extend them.
-- If unsure whether a mapping is Simple or Complex, treat it as Complex and ask.
-- Preserve existing namespaces/DI patterns already used in the codebase.
-- Optimize for maintainability and readability of the resulting code, not just
-  test-passing — this is a long-lived codebase, not a one-off conversion.
-
-Start with Phase 1: inventory CisiveService's AutoMapper usage and give me the
-Simple/Complex breakdown, with your architectural reasoning, before converting anything.
-
-
-
-Analyze this entire solution and produce a single markdown document with these sections:
-	1.	Projects & Layers — every project in the solution, its type (Web/API/Domain/Infrastructure/etc.), and how they reference each other (dependency graph as text).
-	2.	Data Model — all major entities/tables per project, their relationships (FKs, joins), and which project “owns” each entity.
-	3.	External Integrations — every outbound call: other APIs, SSO/auth providers, message queues, file/SFTP, third-party services. Note sync vs async.
-	4.	Cross-Cutting Concerns — auth/authorization model, logging, caching, background jobs/workers, shared libraries used across projects.
-	5.	Current Bounded Contexts (informal) — group functionality by business capability as it exists today (e.g. “Menu/Role Admin,” “File Import,” “Document Ingestion”), even if it’s all one monolith.
-	6.	Hot Paths & Coupling — which modules change together most, which entities are read/written by more than one “context,” any tight coupling that would resist splitting.
-	7.	Deployment Today — how it’s hosted/deployed now (single app, IIS, containers, etc.), and any existing seams (separate DBs, separate deploy pipelines).
-Be concrete — real class/project/table names, not generic placeholders. Keep it factual inventory, not recommendations.
-
-dotnet list <project> package --include-transitive | findstr /i "kafka raven"
-
-cd C:\Users\K059839\source\repos\Vstar-NewRepo
-dotnet list Vstar.sln package --include-transitive | findstr /i "raven"
-
-Get-ChildItem -Recurse -Include *.csproj,*.json | Select-String -Pattern "raven" -SimpleMatch
-
-cd C:\Users\K059839\source\repos\Vstar-NewRepo\src\Web
-dotnet list package --include-transitive
-
-Get-ChildItem -Recurse -Include *.csproj,*.config,*.json -Exclude node_modules | Select-String -Pattern "raven" -SimpleMatch
-
-SELECT
-    TemplateId,
-    Name,
-    CASE WHEN Body LIKE '%<b>%' OR Body LIKE '%<strong>%' OR Body LIKE '%font-weight%bold%' THEN 1 ELSE 0 END AS HasBold,
-    CASE WHEN Body LIKE '%<i>%' OR Body LIKE '%<em>%' THEN 1 ELSE 0 END AS HasItalic,
-    CASE WHEN Body LIKE '%<u>%' OR Body LIKE '%text-decoration%underline%' THEN 1 ELSE 0 END AS HasUnderline,
-    CASE WHEN Body LIKE '%<ul%' OR Body LIKE '%<ol%' THEN 1 ELSE 0 END AS HasList,
-    CASE WHEN Body LIKE '%<a %' OR Body LIKE '%href%' THEN 1 ELSE 0 END AS HasLink,
-    CASE WHEN Body LIKE '%<table%' THEN 1 ELSE 0 END AS HasTable,
-    CASE WHEN Body LIKE '%align=%' OR Body LIKE '%text-align%' THEN 1 ELSE 0 END AS HasAlign,
-    CASE WHEN Body LIKE '%font-family%' THEN 1 ELSE 0 END AS HasFontFamily,
-    CASE WHEN Body LIKE '%font-size%' THEN 1 ELSE 0 END AS HasFontSize,
-    CASE WHEN Body LIKE '%color%' THEN 1 ELSE 0 END AS HasColor,
-    CASE WHEN Body LIKE '%<sub>%' OR Body LIKE '%<sup>%' THEN 1 ELSE 0 END AS HasSubSuper,
-    CASE WHEN Body LIKE '%&lt;%' THEN 1 ELSE 0 END AS IsDoubleEncoded,
-    LEN(Body) AS BodyLength
-FROM EmailTemplates
-ORDER BY TemplateId;
-
-In this MVC app's Startup/Auth config file, show me:
-
-The full OWIN/OIDC middleware setup code (wherever PingFederate is configured — Startup.cs, Startup.Auth.cs, or similar).
-Any NuGet package reference related to Ping or auth that looks internal/Wells-Fargo-specific rather than a standard public package (check the .csproj or packages.config).
-Any code that runs after login to read claims — search for SecurityTokenValidated, ClaimsTransformation, User.IsInRole, ClaimsPrincipal.FindFirst, or [Authorize(Roles=...)] — and show me that code.
-Search the whole solution for the text "CHR" and show me every place it appears, with the surrounding code/config.
-The cookie/session config for this app (name, expiration, sliding expiration) — usually near the OWIN auth setup too.
-
-
+OnTokenValidated = context =>
+            {
+                System.Text.StringBuilder sb = new();
+                sb.AppendLine($"===== PING CLAIMS DUMP {DateTime.Now:O} =====");
+ 
+                if (context.Principal is not null)
+                {
+                    foreach (ClaimsIdentity identity in context.Principal.Identities)
+                    {
+                        sb.AppendLine($"--- Identity: {identity.AuthenticationType} ---");
+ 
+                        foreach (Claim claim in identity.Claims)
+                        {
+                            sb.AppendLine($"  {claim.Type} = {claim.Value}  [{claim.ValueType}]");
+                        }
+                    }
+                }
+                else
+                {
+                    sb.AppendLine("context.Principal was NULL");
+                }
+ 
+                System.IO.File.AppendAllText(@"C:\temp\ping-claims-dump.txt", sb.ToString() + Environment.NewLine);
+ 
+                MapPingRoleClaims(context.Principal, ping);
+                MapPingProfileClaims(context.Principal, ping);
+                return Task.CompletedTask;
+            },
+        };
