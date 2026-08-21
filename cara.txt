@@ -100,3 +100,32 @@ SELECT
 FROM EmailTemplates
 ORDER BY TemplateId;
 
+
+I need you to document our real PingFederate setup for AppPortal (EnterprisePortal API + ng-enterprise Angular app) so I can hand this report to another AI assistant that already scaffolded Ping support into both repos but used placeholder values.
+
+I have the real Ping details (Authority URL, Client ID(s), redirect URIs, scopes, and a sample access token). [If any of these live in a config file, email, ticket, or password manager on this machine, look there; otherwise I'll paste them in when you ask.]
+
+Produce a single markdown report at ./ping-integration-details.md with these sections, filled in from the real values (never fabricate a value — if something is genuinely unknown, write "UNKNOWN — needs confirming" rather than guessing):
+
+1. Core settings
+Authority/Issuer URL per environment (dev/qa/prod)
+Client ID for the API, and for the Angular SPA if different
+Whether each client is registered as public/PKCE or confidential
+Redirect URI(s) and post-logout redirect URI(s) allowlisted per client
+Scopes granted
+Response type
+Token signing algorithm (read it from the JWT header of a real token, not assumed)
+2. Claims (decode a real access token to get this — do not guess)
+
+Take a sample Ping-issued access token from us and decode its payload (base64url-decode the middle segment; note this is NOT signature verification, just inspection). List:
+
+Every claim name present, with an example value (redact sub/email/PII if needed but keep exact claim NAMES visible)
+Which claim carries role/group membership, its value shape (single string vs array), and the RAW values it contains (e.g. is it literally "Admin"/"Manager"/"User", or something else like an AD group DN or a prefixed name like "WF-APPPORTAL-ADMIN" that would need mapping to our app's role names)
+Which claim carries email
+Which claim carries full name (single "name" claim, or separate given_name/family_name)
+Whether a department (or equivalent) claim exists
+3. Discrepancies or open questions
+
+Anything that doesn't cleanly map to what a standard OIDC client expects — e.g. non-standard claim names, an unusual response_mode, a discovery endpoint that isn't at the standard /.well-known/openid-configuration path, expected clock skew tolerance, signing key rotation frequency, or environment-specific differences between dev/qa/prod that matter for config.
+
+Do not modify any code in EnterprisePortal or ng-enterprise — this is a documentation-only task. Output only the markdown report.
