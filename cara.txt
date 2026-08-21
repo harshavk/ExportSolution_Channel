@@ -100,30 +100,12 @@ SELECT
 FROM EmailTemplates
 ORDER BY TemplateId;
 
+In this MVC app's Startup/Auth config file, show me:
+
+The full OWIN/OIDC middleware setup code (wherever PingFederate is configured — Startup.cs, Startup.Auth.cs, or similar).
+Any NuGet package reference related to Ping or auth that looks internal/Wells-Fargo-specific rather than a standard public package (check the .csproj or packages.config).
+Any code that runs after login to read claims — search for SecurityTokenValidated, ClaimsTransformation, User.IsInRole, ClaimsPrincipal.FindFirst, or [Authorize(Roles=...)] — and show me that code.
+Search the whole solution for the text "CHR" and show me every place it appears, with the surrounding code/config.
+The cookie/session config for this app (name, expiration, sliding expiration) — usually near the OWIN auth setup too.
 
 
-This MVC application already has a working PingFederate integration. I need you to document exactly how it's implemented — as a report only, do not change any code here — so the same pattern can be replicated in a separate ASP.NET Core 10 Web API + Angular SPA project.
-
-Produce a single markdown report at ./ping-mvc-integration-report.md covering:
-
-1. Libraries / packages used
-List every NuGet package related to authentication, OWIN, OIDC, or Ping (check .csproj / packages.config). Note exact package names and versions (e.g. Microsoft.Owin.Security.OpenIdConnect, IdentityModel, Microsoft.AspNetCore.Authentication.OpenIdConnect, or anything Ping-specific/internal like a Wells Fargo shared auth library).
-2. How auth is wired up
-Find and quote the actual registration code (Startup.cs / OWIN Startup.Auth.cs / Program.cs — wherever it lives) that configures PingFederate: the OWIN/ASP.NET middleware call, all options set (Authority, ClientId, ClientSecret usage — is it used here since MVC can keep server-side secrets safely?, RedirectUri, ResponseType, Scope, SignInAsAuthenticationType, any CookieAuthenticationOptions).
-Note whether this is a confidential client (server-side, uses ClientSecret) since MVC can hold secrets safely unlike a browser SPA — flag this difference explicitly, since our new Angular SPA can't use a client secret and must use PKCE instead.
-Is this the Authorization Code flow, hybrid flow, or something else? Quote the response_type used.
-3. Claims handling
-Find any ClaimsTransformation, notification handlers (e.g. SecurityTokenValidated, AuthorizationCodeReceived), or claims mapping code. Quote it.
-What is the exact claim name used for role/group membership in this app? What do the raw values look like (quote actual role/group claim values used in [Authorize(Roles="...")] attributes or equivalent checks elsewhere in the code)?
-Is there a mapping step from Ping's raw claim values to this app's internal role/permission names, or are Ping's values used directly? Quote that mapping code if it exists.
-What claim is used for user identity/email/display name? Quote where it's read (e.g. User.Identity.Name, ClaimsPrincipal.FindFirst(...)).
-4. Session/token lifecycle
-How does this app persist the authenticated session — auth cookie, server-side session, or something else? (MVC apps often use cookie auth backed by the OIDC middleware rather than raw JWT bearer tokens — note which this is, since our new API is bearer-token based, not cookie-based, so this will need translating rather than copying verbatim.)
-Is there a token refresh / silent renew mechanism? Quote it.
-How does logout work — single logout (SLO) against Ping, just local cookie clear, or both? Quote the logout code.
-5. Config values (the connection details, not secrets)
-Authority/Issuer URL(s) per environment, if visible in appsettings/web.config (redact anything obviously secret like ClientSecret itself, but note that a secret IS configured here since it's a confidential MVC client).
-ClientId(s) per environment.
-Redirect URI(s) configured.
-6. Anything Wells-Fargo-specific
-Any custom/internal NuGet package, base class, or convention this app uses for Ping that looks like an internal shared library rather than a standard open-source one — name it and note what it wraps, since our new API/SPA repos may need to reference the same internal package instead of raw Microsoft.AspNetCore.Authentication.JwtBearer if one exists org-wide.
