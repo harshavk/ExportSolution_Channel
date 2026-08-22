@@ -1,29 +1,5 @@
-OnTokenValidated = context =>
-            {
-                System.Text.StringBuilder sb = new();
-                sb.AppendLine($"===== PING CLAIMS DUMP {DateTime.Now:O} =====");
- 
-                if (context.Principal is not null)
-                {
-                    foreach (ClaimsIdentity identity in context.Principal.Identities)
-                    {
-                        sb.AppendLine($"--- Identity: {identity.AuthenticationType} ---");
- 
-                        foreach (Claim claim in identity.Claims)
-                        {
-                            sb.AppendLine($"  {claim.Type} = {claim.Value}  [{claim.ValueType}]");
-                        }
-                    }
-                }
-                else
-                {
-                    sb.AppendLine("context.Principal was NULL");
-                }
- 
-                System.IO.File.AppendAllText(@"C:\temp\ping-claims-dump.txt", sb.ToString() + Environment.NewLine);
- 
-                MapPingRoleClaims(context.Principal, ping);
-                MapPingProfileClaims(context.Principal, ping);
-                return Task.CompletedTask;
-            },
-        };
+List every controller action in src/AppPortal.API/Controllers/, one line per action, in this exact format:
+
+ControllerName | HTTP verb | Route | Current [Authorize] attribute (if any)
+
+Group by controller. Include every action, even ones with no explicit route attribute. Just paste the plain list — don't summarize, don't add commentary, don't skip anything.
