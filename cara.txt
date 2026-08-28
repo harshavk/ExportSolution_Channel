@@ -1,39 +1,50 @@
-Analyze this entire solution and generate a CLAUDE.md file at the repo root.
+New feature: [one-line description]
 
-Cover:
-1. Solution structure — list all projects under src/ and tests/, one line each on their responsibility (Domain, Application, Infrastructure, API, Shared, Worker.Contracts, WorkerService), and Clean Architecture dependency rules between them.
-2. Coding standards — read src/CONTRIBUTING.md in full and summarize its enforced rules (Result pattern, UnitOfWork, no var, always-braces, file-scoped namespaces, sealed classes, method length limit, structured logging, PagedResult pattern). Say explicitly: "Full rules in src/CONTRIBUTING.md — read it before generating code."
-3. Auth — current state of the Local vs Ping switch (Auth:Provider config), ICurrentUserService implementations (Stub vs Claims), and that authorization is resolved live from AD groups, not persisted per-user.
-4. DB/EF conventions — where migrations are run from (Package Manager Console, not CLI), Default project vs Startup project, and note if any tables use temporal history.
-5. Build/test/run commands.
-6. A short "conventions to never violate" list distilled from CONTRIBUTING.md.
-7. Current in-progress work (check recent git log/branches) so I don't get contradicted mid-migration.
+Context: [which module/area this touches, e.g. "Admin area, extends the Role CRUD pattern" or "new Angular feature module under features/"]
 
-Also create a nested CLAUDE.md inside src/Infrastructure/ covering EF Core-specific conventions if warranted.
+Requirements:
+- [what it should do, bullet by bullet]
+- [any specific edge cases or business rules]
 
-Keep the root file under 150 lines. Write it now.
+Before writing code:
+1. Check CLAUDE.md and follow existing conventions
+2. Look at [an existing similar feature, e.g. "MenuAdminService/MenuAdminController"] as the reference pattern
+3. Tell me your plan (files to touch/create, layer-by-layer) before implementing
 
+Apply the Code Quality Bar from CLAUDE.md (performance, memory, readability, maintainability).
 
-Analyze this entire Angular application and generate a CLAUDE.md file at the repo root.
+Example — AppPortal (.NET)
+New feature: Permission Groups CRUD under Admin area.
 
-Cover:
-1. Folder structure — feature modules vs shared/core, where services, guards, interceptors, and models live.
-2. Angular version and whether components are standalone or NgModule-based.
-3. State management approach actually used in the code (signals, RxJS/BehaviorSubjects, NgRx, etc.) — inspect real files, don't assume.
-4. Styling approach (SCSS structure, Tailwind, component-scoped styles) and any design tokens/theme file.
-5. API integration pattern — HTTP service structure, base URL config, auth interceptor behavior (this app talks to a BFF-pattern .NET backend via session cookie, not bearer JWT — confirm from actual interceptor code).
-6. Naming and file conventions actually used (check 5-10 real component/service files for the pattern).
-7. Lint, format, build, and test commands from package.json.
-8. A short "conventions to never violate" list.
+Context: Admin area, same pattern as existing AD Groups CRUD (dual-panel picker for linked permissions).
 
-Keep it under 120 lines. Write it now.
+Requirements:
+- List/Create/Edit/Delete PermissionGroups
+- Edit screen has dual-listbox to manage linked AppPermissions
+- Follow temporal table conventions since this table will be temporal
 
-Also add a "Code Quality Bar" section to CLAUDE.md stating that all generated code must be evaluated against:
-1. Performance — solve efficiently, avoid unnecessary operations/loops (prefer O(n) over O(n²) where a better approach exists)
-2. Memory — avoid unnecessary object creation or storing unneeded data
-3. Readability — another developer should understand it quickly; clear naming, no clever one-liners at the cost of clarity
-4. Maintainability — someone should be able to modify it easily years from now; favor simple, well-structured code over working-but-inefficient solutions
+Before writing code:
+1. Check CLAUDE.md and CONTRIBUTING.md
+2. Use the AdGroup CRUD screens as the reference pattern (same dual-panel picker UX)
+3. Give me the plan across Domain/Application/Infrastructure/API layers before implementing
 
-State explicitly: working code is not the bar — good code is. When multiple approaches solve the problem, prefer the one that's efficient AND readable, not just the first one that works.
+Apply the Code Quality Bar.
 
 
+Example — Angular
+
+New feature: Notifications panel in the header.
+
+Context: Shared/core area, consumed from the existing header component.
+
+Requirements:
+- Bell icon with unread count badge
+- Dropdown showing last 10 notifications, mark-as-read on click
+- Pulls from NotificationService (already exists — check its interface first)
+
+Before writing code:
+1. Check CLAUDE.md for state management and component conventions
+2. Follow the existing dropdown pattern (Profile/Notifications area in header) if one exists
+3. Give me the plan before implementing
+
+Apply the Code Quality Bar.
