@@ -1,5 +1,29 @@
-List every controller action in src/AppPortal.API/Controllers/, one line per action, in this exact format:
+Analyze this entire solution and generate a CLAUDE.md file at the repo root.
 
-ControllerName | HTTP verb | Route | Current [Authorize] attribute (if any)
+Cover:
+1. Solution structure — list all projects under src/ and tests/, one line each on their responsibility (Domain, Application, Infrastructure, API, Shared, Worker.Contracts, WorkerService), and Clean Architecture dependency rules between them.
+2. Coding standards — read src/CONTRIBUTING.md in full and summarize its enforced rules (Result pattern, UnitOfWork, no var, always-braces, file-scoped namespaces, sealed classes, method length limit, structured logging, PagedResult pattern). Say explicitly: "Full rules in src/CONTRIBUTING.md — read it before generating code."
+3. Auth — current state of the Local vs Ping switch (Auth:Provider config), ICurrentUserService implementations (Stub vs Claims), and that authorization is resolved live from AD groups, not persisted per-user.
+4. DB/EF conventions — where migrations are run from (Package Manager Console, not CLI), Default project vs Startup project, and note if any tables use temporal history.
+5. Build/test/run commands.
+6. A short "conventions to never violate" list distilled from CONTRIBUTING.md.
+7. Current in-progress work (check recent git log/branches) so I don't get contradicted mid-migration.
 
-Group by controller. Include every action, even ones with no explicit route attribute. Just paste the plain list — don't summarize, don't add commentary, don't skip anything.
+Also create a nested CLAUDE.md inside src/Infrastructure/ covering EF Core-specific conventions if warranted.
+
+Keep the root file under 150 lines. Write it now.
+
+
+Analyze this entire Angular application and generate a CLAUDE.md file at the repo root.
+
+Cover:
+1. Folder structure — feature modules vs shared/core, where services, guards, interceptors, and models live.
+2. Angular version and whether components are standalone or NgModule-based.
+3. State management approach actually used in the code (signals, RxJS/BehaviorSubjects, NgRx, etc.) — inspect real files, don't assume.
+4. Styling approach (SCSS structure, Tailwind, component-scoped styles) and any design tokens/theme file.
+5. API integration pattern — HTTP service structure, base URL config, auth interceptor behavior (this app talks to a BFF-pattern .NET backend via session cookie, not bearer JWT — confirm from actual interceptor code).
+6. Naming and file conventions actually used (check 5-10 real component/service files for the pattern).
+7. Lint, format, build, and test commands from package.json.
+8. A short "conventions to never violate" list.
+
+Keep it under 120 lines. Write it now.
