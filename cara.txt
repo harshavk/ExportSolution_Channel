@@ -27,3 +27,13 @@ Cover:
 8. A short "conventions to never violate" list.
 
 Keep it under 120 lines. Write it now.
+
+Also add a "Code Quality Bar" section to CLAUDE.md stating that all generated code must be evaluated against:
+1. Performance — solve efficiently, avoid unnecessary operations/loops (prefer O(n) over O(n²) where a better approach exists)
+2. Memory — avoid unnecessary object creation or storing unneeded data
+3. Readability — another developer should understand it quickly; clear naming, no clever one-liners at the cost of clarity
+4. Maintainability — someone should be able to modify it easily years from now; favor simple, well-structured code over working-but-inefficient solutions
+
+State explicitly: working code is not the bar — good code is. When multiple approaches solve the problem, prefer the one that's efficient AND readable, not just the first one that works.
+
+
