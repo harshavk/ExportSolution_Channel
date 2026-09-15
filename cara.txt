@@ -1,50 +1,8 @@
-New feature: [one-line description]
-
-Context: [which module/area this touches, e.g. "Admin area, extends the Role CRUD pattern" or "new Angular feature module under features/"]
-
-Requirements:
-- [what it should do, bullet by bullet]
-- [any specific edge cases or business rules]
-
-Before writing code:
-1. Check CLAUDE.md and follow existing conventions
-2. Look at [an existing similar feature, e.g. "MenuAdminService/MenuAdminController"] as the reference pattern
-3. Tell me your plan (files to touch/create, layer-by-layer) before implementing
-
-Apply the Code Quality Bar from CLAUDE.md (performance, memory, readability, maintainability).
-
-Example — AppPortal (.NET)
-New feature: Permission Groups CRUD under Admin area.
-
-Context: Admin area, same pattern as existing AD Groups CRUD (dual-panel picker for linked permissions).
-
-Requirements:
-- List/Create/Edit/Delete PermissionGroups
-- Edit screen has dual-listbox to manage linked AppPermissions
-- Follow temporal table conventions since this table will be temporal
-
-Before writing code:
-1. Check CLAUDE.md and CONTRIBUTING.md
-2. Use the AdGroup CRUD screens as the reference pattern (same dual-panel picker UX)
-3. Give me the plan across Domain/Application/Infrastructure/API layers before implementing
-
-Apply the Code Quality Bar.
-
-
-Example — Angular
-
-New feature: Notifications panel in the header.
-
-Context: Shared/core area, consumed from the existing header component.
-
-Requirements:
-- Bell icon with unread count badge
-- Dropdown showing last 10 notifications, mark-as-read on click
-- Pulls from NotificationService (already exists — check its interface first)
-
-Before writing code:
-1. Check CLAUDE.md for state management and component conventions
-2. Follow the existing dropdown pattern (Profile/Notifications area in header) if one exists
-3. Give me the plan before implementing
-
-Apply the Code Quality Bar.
+npm view @mui/material versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view zustand versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view @tanstack/react-query versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view axios versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view react-router-dom versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view framer-motion versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view i18next versions --registry=https://your-artifactory-url/api/npm/npm-remote/
+npm view msw versions --registry=https://your-artifactory-url/api/npm/npm-remote/
